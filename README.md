@@ -2,14 +2,14 @@
 
 A data file is available for your download at http://thin.med.ucalgary.ca/data/analyst-data.csv
 
--This file contains 300K records
--Each record has 6 variables (id, time, cats, v1, v2, v3)
+  - This file contains 300K records
+  - Each record has 6 variables (id, time, cats, v1, v2, v3)
 
 Although this assessment involves the calculation of a few statistics, priorities in assessing the responses of each candidate are as follows:
 
--Clear, complete, repeatable, well-commented code
--Demonstration of proficiency in data summary and manipulation
--Numbers that are sensible and comparable with staff completions of the same assignment
+  - Clear, complete, repeatable, well-commented code
+  - Demonstration of proficiency in data summary and manipulation
+  - Numbers that are sensible and comparable with staff completions of the same assignment
 
 This is contrived and randomly generated data.  We are aware that different statistical packages, approaches and personal preferences will introduce small amounts of variance in results.  This will not be held against you.  
 
