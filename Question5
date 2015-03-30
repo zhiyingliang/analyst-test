@@ -1,0 +1,163 @@
+> ## summary of model statistics
+> summary(m.2)
+Linear mixed model fit by REML ['lmerMod']
+Formula: gauss ~ cats + time + (1 | id)
+   Data: crudata
+
+REML criterion at convergence: 1816990
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-4.3491 -0.6764  0.0019  0.6725  4.4388 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ id       (Intercept)  0.03807 0.1951  
+ Residual             24.95712 4.9957  
+Number of obs: 300000, groups:  id, 1e+05
+
+Fixed effects:
+            Estimate Std. Error t value
+(Intercept) 16.05462    0.02739   586.1
+catsthree    7.99932    0.02236   357.7
+catstwo      3.99777    0.02236   178.8
+time        -0.02513    0.01117    -2.2
+
+Correlation of Fixed Effects:
+          (Intr) ctsthr catstw
+catsthree -0.410              
+catstwo   -0.408  0.500       
+time      -0.816  0.002  0.000
+> 
+> ## summary of variances
+> anova(m.2)
+Analysis of Variance Table
+     Df  Sum Sq Mean Sq    F value
+cats  2 3194097 1597048 63991.7019
+time  1     126     126     5.0603
+
+Assessment:
+perform a linear mixed effects analysis of the relationship between response variable gauss and the predictor variable cats. 
+After fitting four models, I selected a linear mixed model with variable time, cats (no interaction) as fixed effects and 
+by-id as a random effect to response variable gauss. The output of the summary of the model shows the p-value for cats’ coefficients 
+are 2*10^(-16), indicates that I can reject the hull hypothesis that cats’ coefficient is equal to zero. 
+In other words, the predictor variable cats’ level changes are related to changes in the response variable gauss. 
+To be precise, coefficients of the model predicts that when the cats’ level change from one to two, response variable gauss 
+increase 3.999 units and change from two to three, response variable gauss increase  4 units. SE of the predictors cats are 
+quite small, small standard errors indicate better precision of the coefficients. However, the residual plot shows I am most 
+likely dealing with some kind of categorical data and need to use different models. I fitted a generalized linear mixed model,
+the output shows the problem still exists. Maybe I need to try different class models, such as logistic models. 
+Sorry I ran out my time.
+
+Script:
+################################
+##DATA EXPLORATION
+################################
+
+## plot density of gauss
+plot(density(crudata$gauss))
+
+## produce a Q-Q plot to check the distribution is normal or not 
+qqnorm(crudata$gauss, main ="Normal Q-Q Plot for Gauss")
+
+## add a line to a normal QQplot
+qqline(crudata$gauss)
+
+## produce a boxplot of gauss against cats and time
+boxplot(gauss ~ cats * time, col=c("white", "lightgray", "darkgray"),crudata)
+
+## produce a boxplot of gauss against cats to check the distbution for individual cats
+boxplot(crudata$gauss ~ crudata$cats)
+
+################################
+##DATA ANALYSIS
+################################
+
+install.packages("lme4") 
+library(lme4)
+## fit a linear mixed model
+## time, cats and their interaction as fixed effects
+## id as a random effect
+m.3 <- lmer(gauss ~ cats + time + cats * time + (1|id), data = crudata) 
+
+## summary of model statistics
+summary(m.3)
+
+## summary of variances
+anova(m.3)
+
+## fit a linear mixed model 
+## time, cats as fixed effects
+## id as a random effect
+m.2 <- lmer(gauss ~ cats + time + (1|id), data = crudata) 
+
+## summary of model statistics
+summary(m.2)
+
+## summary of variances
+anova(m.2)
+
+## fit a linear mixed model 
+## time, cats as fixed effects
+## id as a random effect
+m.1 <- lmer(gauss ~ cats  + (1|id), data = crudata) 
+
+## summary of variances
+summary(m.1)
+
+## summary of variances
+anova(m.1)
+
+## perform the likelihood ratio test
+anova(m.3, m.2, m.1)
+
+
+
+################################
+##VALIDATION OF MODEL ASSUMPTION
+################################
+
+## produce histgram to check normality of residuals
+hist(residuals(m.2))
+
+## produce a Q-Q plot to check normality of residuals
+qqnorm(residuals(m.2))
+
+## add a line to a normal QQplot
+qqline(residuals(m.2))
+
+## to check linearity assumption
+plot(fitted(m.2), residuals(m.2))
+
+################################
+##MORE DATA ANALYSIS
+################################
+
+
+install.packages("MASS")
+library(nlme)
+
+
+## fit a generalized linear mixed model 
+## time, cats as fixed effects
+## id as a random effect
+model.PQL <- MASS:::glmmPQL(gauss ~  cats, ~1|id, 
+ family=gaussian(link="identity"), data = crudata, 
+ niter = 10, verbose = TRUE )
+
+## summary of variances
+summary(model.PQL)
+
+## summary of variances
+anova(model.PQL)
+
+################################
+##VALIDATION OF MODEL ASSUMPTION
+################################
+
+## to check linearity assumption
+plot(fitted(model.PQL), residuals(model.PQL))
+
+
+
+
