@@ -1,0 +1,87 @@
+> ################################
+> ## DESCRIPTIVE STATISTICS 
+> ################################
+> 
+> ## download 3000k records to dataset, crudata
+> crudata = read.csv ("http://thin.med.ucalgary.ca/data/analyst-data.csv") 
+> 
+> ## display the names of variables in column order of the dataset
+> names(crudata)
+[1] "id"   "time" "cats" "v1"   "v2"   "v3"  
+> 
+> ## display the characteristics, type of the variables in the dataset
+> str(crudata)
+'data.frame':   300000 obs. of  6 variables:
+ $ id  : num  1 2 3 4 5 6 7 8 9 10 ...
+ $ time: int  1 1 1 1 1 1 1 1 1 1 ...
+ $ cats: Factor w/ 3 levels "one","three",..: 1 3 3 3 2 3 1 1 3 3 ...
+ $ v1  : num  6.459 -0.866 2.32 2.217 11 ...
+ $ v2  : int  4 2 3 3 5 3 1 1 0 2 ...
+ $ v3  : num  16.7 17.5 20.5 12.4 25.8 ...
+> 
+> ## total number of records excluding null value
+> NROW(na.omit(crudata)) 
+[1] 300000
+> 
+> ## calculate mean,median,25th and 75th quartiles,min,max
+> summary(crudata)
+       id              time      cats              v1          
+ Min.   :     1   Min.   :1   one  : 99984   Min.   :-32.7770  
+ 1st Qu.: 25001   1st Qu.:1   three: 99979   1st Qu.: -5.5564  
+ Median : 50001   Median :2   two  :100037   Median : -0.8395  
+ Mean   : 50001   Mean   :2                  Mean   :  0.0088  
+ 3rd Qu.: 75000   3rd Qu.:3                  3rd Qu.:  4.8521  
+ Max.   :100000   Max.   :3                  Max.   : 43.2321  
+       v2               v3        
+ Min.   : 0.000   Min.   :-5.764  
+ 1st Qu.: 2.000   1st Qu.:15.902  
+ Median : 3.000   Median :20.013  
+ Mean   : 2.998   Mean   :20.003  
+ 3rd Qu.: 4.000   3rd Qu.:24.121  
+ Max.   :15.000   Max.   :46.072  
+> 
+> ## calculate standard deviation for v1, v2, v3
+> sd(crudata$v1)   
+[1] 7.456355
+> sd(crudata$v2)
+[1] 1.730772
+> sd(crudata$v3)
+[1] 5.971473
+> 
+
+Description:
+The file analyst-data.csv has 6 variables (id, time, cats, v1, v2, v3) and 300,000 records. There is no missing data in this dataset.
+
+Variable 	Description
+id 		    number [1, 100000]; identification for repeated measurement. 
+time 		  integers [1,3] ; with mean of 2.000 and median of 2.
+cats 	  	factor with three levels (one, two, three); levels are well balanced
+v1        real number from (-32.8, 43.3); with mean of 0.009 and standard deviation (sd)of 7.456. 
+v2 		    positive integer from [0, 15]; with mean of 2.998 and sd of 1.731.
+v3 		    real number from (-5.8, 46.1); with mean of 20.003 and sd of 5.971.
+
+Script:
+################################
+## DESCRIPTIVE STATISTICS 
+################################
+
+## download 3000k records to dataset, crudata
+crudata = read.csv ("http://thin.med.ucalgary.ca/data/analyst-data.csv") 
+
+## display the names of variables in column order of the dataset
+names(crudata)
+
+## display the characteristics, type of the variables in the dataset
+str(crudata)
+
+## total number of records excluding null value
+NROW(na.omit(crudata)) 
+
+## calculate mean,median,25th and 75th quartiles,min,max
+summary(crudata)
+
+## calculate standard deviation for v1, v2, v3
+sd(crudata$v1)   
+sd(crudata$v2)
+sd(crudata$v3)
+
