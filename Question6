@@ -1,0 +1,130 @@
+Script:
+################################
+##SAMPLING
+################################
+
+##  ensure results reproducible
+set.seed(13)  
+
+## generate 100000 random numbers from a normal distribution with mean of 0 and standard deviation of 6
+delta <- rnorm(100000, 0, 8) 
+
+## create random effect by repeating the random numbers
+delta <- rep (delta, 3)
+
+##  ensure results reproducible
+set.seed(31)  
+
+
+## generate a new variable
+myvar <- 3 * ( crudata$time - mean(crudata$time)) + rnorm(300000, 23.99, 5.49) + delta 
+## generate a new dataset, cru, with the new variable,
+cru <- data.frame(crudata, myvar) 
+
+## verify the mean of myvar is close to 24
+mean(myvar)  
+
+## verify the standard deviation of myvar is 10  
+sd(myvar)
+
+## plot density of gauss
+plot(density(cru$myvar))
+
+## produce a Q-Q plot to check the distribution is normal or not 
+qqnorm(cru$myvar, main ="Normal Q-Q Plot for myvar")
+
+## add a line to a normal QQplot
+qqline(cru$myvar)
+
+## produce a boxplot of gauss against cats and time
+boxplot(myvar ~ cats * time, col=c("white", "lightgray", "darkgray"),cru)
+
+## produce a boxplot of gauss against cats to check the distbution for individual cats
+boxplot(cru$myvar ~ cru$time)
+
+
+################################
+##DATA ANALYSIS
+################################
+
+library(lmerTest)
+ 
+## fit a mixed model when time is treated as fixed effect and id is treated as random effect 
+m.new <- lmer(myvar ~ time + cats + (1|id), data = cru)
+
+
+## summary of modal statistics
+summary(m.new) 
+
+
+## summary of variances
+anova(m.new) 
+
+## check model assumption
+plot(fitted(m.new), residuals(m.new)) 
+
+## verify the linear regression coefficient for time is 3
+coef(summary(m.new))[2] 
+
+
+
+Model Summmary Statistics:
+
+> summary(m.new) 
+Linear mixed model fit by REML 
+t-tests use  Satterthwaite approximations to degrees of freedom ['merModLmerTest']
+Formula: myvar ~ time + cats + (1 | id)
+   Data: cru
+
+REML criterion at convergence: 2073334
+
+Scaled residuals: 
+    Min      1Q  Median      3Q     Max 
+-3.9629 -0.5708  0.0018  0.5708  3.8266 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ id       (Intercept) 63.84    7.990   
+ Residual             30.24    5.499   
+Number of obs: 300000, groups:  id, 1e+05
+
+Fixed effects:
+              Estimate Std. Error         df t value Pr(>|t|)    
+(Intercept)  1.800e+01  4.036e-02  2.783e+05 445.902   <2e-16 ***
+time         3.004e+00  1.230e-02  2.000e+05 244.296   <2e-16 ***
+catsthree    2.362e-02  2.915e-02  2.261e+05   0.810    0.418    
+catstwo     -3.075e-02  2.914e-02  2.261e+05  -1.055    0.291    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Correlation of Fixed Effects:
+          (Intr) time   ctsthr
+time      -0.610              
+catsthree -0.363  0.003       
+catstwo   -0.361  0.000  0.501
+> 
+> 
+> ## summary of variances
+> anova(m.new) 
+Analysis of Variance Table of type 3  with  Satterthwaite 
+approximation for degrees of freedom
+      Sum Sq Mean Sq NumDF  DenDF F.value Pr(>F)    
+time 1804450 1804450     1 199998   59681 <2e-16 ***
+cats     106      53     2 226082       2 0.1734    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> 
+> 
+> ## verify the linear regression coefficient for time is 3
+> coef(summary(m.new))[2] 
+[1] 3.003721
+> 
+
+Interpretation:
+
+The linear regression coefficient for the variable time is 3.003 and the p-value of this coefficient is 2*10^(-16), 
+which means the predictor variable time changes are related to changes in the response variable myvar significantly. 
+To be more precise, it predicts that when the variable time change one unit, the response variable myvar will increase about 3 units. 
+SE of the predictors cats are quite small, small standard errors indicate better precision of the coefficients. P-value is obtained by 
+likelihood ratio test of the model is signicant. Visual inspecton of residual plots did not reveal any obvious deviation from homoscedasticit, 
+however, the resudual seemes increase as the fitted value gets larger. 
