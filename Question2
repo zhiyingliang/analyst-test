@@ -1,0 +1,16 @@
+Script:
+####################################
+## RENAME VARIABLES
+####################################
+
+## rename varible v1 to normal
+names(crudata)[names(crudata)=="v1"] <- "normal"  
+
+## rename varible v2 to poisson
+names(crudata)[names(crudata)=="v2"] <- "poisson" 
+
+## rename varible v3 to gauss
+names(crudata)[names(crudata)=="v3"] <- "gauss"  
+
+## list varible names, verify the changes
+names(crudata) 
